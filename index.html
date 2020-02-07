@@ -56,7 +56,8 @@
             console.log('用户进入插件', code, type, payload)
 
             //设置用户输入的默认值
-            this.jsonValue = payload !== this.appName ? '' : '{}'
+            this.jsonValue = payload !== this.appName ? payload : '{}'
+            //触发一次格式化
             this.setPostmanValue()
             // 设置快捷键
             // this.setShortcut('alt+1')
