@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" />
+    <script type="text/javascript" src="static/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="static/index.css" type="text/css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <el-row class="json_box">
+        <el-col :span="24"><el-input type="textarea" :rows="6" placeholder="输入字符串" v-model="jsonValue" @input="setPostmanValue"> </el-input></el-col>
+      </el-row>
+      <el-card v-if="postmanValue" style="margin-top: 10px;">
+        <div class="postmanbox">
+          <div class="grid-content postmanvalue">{{postmanValue}}</div>
+          <div class="postmancopy">
+            <!-- <span class="copy_key">Alt+1</span> -->
+            <el-button size="mini" @click="copyPostmanValue">复制</el-button>
+          </div>
+        </div>
+      </el-card>
+      <el-card v-if="urlValue" style="margin-top: 10px;">
+        <div class="postmanbox">
+          <div class="grid-content postmanvalue">{{urlValue}}</div>
+          <div class="postmancopy">
+            <!-- <span class="copy_key">Alt+1</span> -->
+            <el-button size="mini" @click="copyUrlValue">复制</el-button>
+          </div>
+        </div>
+      </el-card>
+      <el-row style="margin-top: 10px;">
+        <el-checkbox v-model="isurlencode" @change="setPostmanValue">encodeURIComponent</el-checkbox>
+      </el-row>
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: '#main',
+        data: {
+          appName: 'JsonToPostman',
+          //input输入框的值
+          jsonValue: '',
+          //格式化为postman的值
+          postmanValue: '',
+          //格式化为url链接的值
+          urlValue: '',
+          //是否url编码
+          isurlencode: false,
+        },
+        mounted() {
+          //用户进入插件
+          utools.onPluginEnter(({ code, type, payload }) => {
+            console.log('用户进入插件', code, type, payload)
+
+            //设置用户输入的默认值
+            this.jsonValue = payload !== this.appName ? '' : '{}'
+            this.setPostmanValue()
+            // 设置快捷键
+            // this.setShortcut('alt+1')
+          })
+        },
+        methods: {
+          //设置格式化为postman的值
+          setPostmanValue: function() {
+            if (!(value = this.getJsonValue(this.jsonValue))) {
+              return false
+            }
+            if (typeof value !== 'object') {
+              return false
+            }
+            let postman_arr = []
+            let url_arr = []
+            for (let key in value) {
+              if (typeof value[key] == 'array' || typeof value[key] == 'object') {
+                postman_arr.push(`${key}:${JSON.stringify(value[key])}`)
+                url_arr.push(`${key}=${JSON.stringify(value[key])}`)
+              } else {
+                postman_arr.push(`${key}:${this.isurlencode ? encodeURIComponent(value[key]) : value[key]}`)
+                url_arr.push(`${key}=${this.isurlencode ? encodeURIComponent(value[key]) : value[key]}`)
+              }
+            }
+            console.log(postman_arr)
+
+            this.postmanValue = postman_arr.join('\n')
+            this.urlValue = url_arr.join('&')
+          },
+          //取得字符串json转换后的结果
+          getJsonValue: function(str) {
+            try {
+              return JSON.parse(str)
+            } catch (e) {
+              return false
+            }
+          },
+          //复制到剪贴板
+          copyPostmanValue: function() {
+            clipboard.writeText(this.postmanValue)
+            this.showSuccess(`复制成功`)
+          },
+          //复制到剪贴板
+          copyUrlValue: function() {
+            clipboard.writeText(this.urlValue)
+            this.showSuccess(`复制成功`)
+          },
+          //设置快捷键
+          setShortcut: function(shortcut) {
+            if (!shortcut) return false
+
+            let that = this
+
+            // 注册快捷键
+            window.setShortcut(shortcut, function() {
+              that.copyValue()
+            })
+          },
+          showError: function(msg) {
+            this.$message.error(msg)
+          },
+          showSuccess: function(msg) {
+            this.$message({ message: msg, type: 'success' })
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

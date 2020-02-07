@@ -1,0 +1,25 @@
+{
+    "pluginName": "Json转Postman",
+    "description": "Json转Postman插件",
+    "author": "大面包",
+    "homepage": "https://liu.app",
+    "main": "index.html",
+    "logo": "logo.png",
+    "version": "0.0.1",
+    "preload":"preload.js",
+    "features": [
+        {
+            "code": "json",
+            "explain": "Json转Postman插件",
+            "cmds":[
+                "JsonToPostman",
+                {
+                    "type": "regex",
+                    "label": "JsonToPostman",
+                    "match": "/^(\\{[\\s\\S]*\\}|\\[[\\s\\S]*\\])$/",
+                    "minLength": 2
+                }
+            ]
+        }
+    ]
+}
