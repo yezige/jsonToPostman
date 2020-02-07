@@ -1,4 +1,4 @@
-# Json转Postman插件
+# utools版Json转Postman插件
 
 此插件可以将json格式的数据转换为postman可用的`Bulk Edit`可用格式。
 
