@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="static/element-ui/lib/theme-chalk/index.css" />
-    <link rel="stylesheet" href="static/index.css" type="text/css" />
+    <link rel="stylesheet" href="static/index.css?v=0.1" type="text/css" />
     <script type="text/javascript" src="static/vue.min.js"></script>
     <script src="static/element-ui/lib/index.js"></script>
   </head>
@@ -13,6 +13,7 @@
       <el-row class="json_box">
         <el-col :span="24"><el-input type="textarea" :rows="6" placeholder="输入字符串" v-model="jsonValue" @input="setPostmanValue"> </el-input></el-col>
       </el-row>
+      <el-row class="title">For Bulk Edit: </el-row>
       <el-card v-if="postmanValue" style="margin-top: 10px;">
         <div class="postmanbox">
           <div class="grid-content postmanvalue">{{postmanValue}}</div>
@@ -22,6 +23,7 @@
           </div>
         </div>
       </el-card>
+      <el-row class="title">For Url: </el-row>
       <el-card v-if="urlValue" style="margin-top: 10px;">
         <div class="postmanbox">
           <div class="grid-content postmanvalue">{{urlValue}}</div>
@@ -67,9 +69,13 @@
           //设置格式化为postman的值
           setPostmanValue: function() {
             if (!(value = this.getJsonValue(this.jsonValue))) {
+              this.postmanValue = ''
+              this.urlValue = ''
               return false
             }
             if (typeof value !== 'object') {
+              this.postmanValue = ''
+              this.urlValue = ''
               return false
             }
             let postman_arr = []
@@ -99,12 +105,12 @@
           //复制到剪贴板
           copyPostmanValue: function() {
             clipboard.writeText(this.postmanValue)
-            this.showSuccess(`复制成功`)
+            this.showSuccess(`复制成功，点击 Postman 的 Bulk Edit 去粘贴吧`)
           },
           //复制到剪贴板
           copyUrlValue: function() {
             clipboard.writeText(this.urlValue)
-            this.showSuccess(`复制成功`)
+            this.showSuccess(`复制成功 []~(￣▽￣)~*`)
           },
           //设置快捷键
           setShortcut: function(shortcut) {
